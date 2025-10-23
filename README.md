@@ -1,1 +1,1 @@
-udělal jsem to tak nějak teďka je to udělaný aby to běželo, udělal jsem to v visual code studio, ale potřebujete si stahnout python a potřebujete potom ještě jeden program kterej se jmenuje postresql o kterym říkal ten typek, teďka je všechno udělaný tak že ti to běží tobě na počítači a hodnoty zadáváš manuálně, potom uděláme to že to bude scrapovat data z bakalářů a stravy(bakaláři budou tuhej oříšek) a převedem to na server aby to dokázalo běžet samo a lidi si to mohli stáhnout.
+
