@@ -11,5 +11,5 @@ COPY . .
 
 EXPOSE 1325
 
-# run the app
-CMD ["python", "app.py"]
+# run data loader first, then app
+CMD ["bash", "-c", "python stsc.py && python app.py"]

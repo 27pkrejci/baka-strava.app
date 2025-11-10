@@ -6,12 +6,12 @@ conn = psycopg2.connect(
     dbname="school_dashboard",
     user="postgres",
     password="dat224551",
-    host="localhost",
+    host="db",
     port="5432"
 )
 cur = conn.cursor()
 
-cur.execute("DELETE FROM lunch;")
+cur.execute("TRUNCATE TABLE lunch RESTART IDENTITY;")
 
 strava = StravaCZ(username="antonin.krejci", password="Ton224551", canteen_number="6627")
 menu = strava.get_menu()
