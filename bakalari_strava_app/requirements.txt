@@ -3,4 +3,4 @@ flask_sqlalchemy
 psycopg2-binary
 requests
 flask_migrate
-strava-cz
+strava-cz==0.1.3
