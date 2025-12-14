@@ -2,6 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import psycopg2
+from timetable_api import find_current_period
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:dat224551@db:5432/school_dashboard'
@@ -226,6 +228,11 @@ def schedule():
 
     except Exception as e:
         return f"<p>Error fetching schedule: {e}</p>"
+
+@app.route('/api/current-period')
+def current_period():
+    data = find_current_period(get_db_connection)
+    return json.dumps(data, ensure_ascii=False, indent=2)
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0', port=1325, debug=True)
