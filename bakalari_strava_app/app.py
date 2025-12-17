@@ -6,7 +6,7 @@ from timetable_api import find_current_period
 import json
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:dat224551@db:5432/school_dashboard'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:dat224551@localhost:1325/school_dashboard'
 
 
 db = SQLAlchemy(app)
@@ -41,8 +41,8 @@ def initialize_database():
 # Database connection function
 def get_db_connection():
     return psycopg2.connect(
-        host="db",  # <--- use the docker service name
-        port=5432,
+        host="localhost",  
+        port=1325,
         database="school_dashboard",
         user="postgres",
         password="dat224551"
@@ -235,4 +235,4 @@ def current_period():
     return json.dumps(data, ensure_ascii=False, indent=2)
 
 if __name__ == '__main__':
-        app.run(host='0.0.0.0', port=1325, debug=True)
+        app.run(host='0.0.0.0', port=5000, debug=True)
