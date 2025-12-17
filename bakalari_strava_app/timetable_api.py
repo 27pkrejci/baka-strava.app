@@ -2,12 +2,15 @@
 from datetime import datetime, time
 import json
 
-# Časové sloty z tvého 3p.json
-TIME_SLOTS = [
-    "8:00- 8:45", "8:55- 9:40", "10:00-10:45", "10:55-11:40",
-    "11:50-12:35", "12:45-13:30", "13:35-14:20", "14:25-15:10",
-    "15:15-16:00", "16:25-17:10"
-]
+# Define time slots with their order in one place to avoid duplication
+TIME_SLOT_ORDER = {
+    "8:00- 8:45": 1, "8:55- 9:40": 2, "10:00-10:45": 3, "10:55-11:40": 4,
+    "11:50-12:35": 5, "12:45-13:30": 6, "13:35-14:20": 7, "14:25-15:10": 8,
+    "15:15-16:00": 9, "16:25-17:10": 10
+}
+
+# Derive TIME_SLOTS from the order dictionary
+TIME_SLOTS = list(TIME_SLOT_ORDER.keys())
 
 # Mapování anglických dnů na české
 DAYS_MAP = {
@@ -52,25 +55,20 @@ class TimetableRepository:
             conn = self.db_connection_func()
             cur = conn.cursor()
             
-            cur.execute("""
+            # Generate ORDER BY clause dynamically from TIME_SLOT_ORDER
+            order_cases = []
+            for slot, order_num in TIME_SLOT_ORDER.items():
+                order_cases.append(f"WHEN '{slot}' THEN {order_num}")
+            order_by_clause = "CASE time_slot\n" + "\n".join(f"                    {case}" for case in order_cases) + "\n                    ELSE 99\n                END"
+            
+            query = f"""
                 SELECT time_slot, subject, "group", teacher, room, week
                 FROM timetable_3p 
                 WHERE day = %s
-                ORDER BY 
-                    CASE time_slot
-                        WHEN '8:00- 8:45' THEN 1
-                        WHEN '8:55- 9:40' THEN 2
-                        WHEN '10:00-10:45' THEN 3
-                        WHEN '10:55-11:40' THEN 4
-                        WHEN '11:50-12:35' THEN 5
-                        WHEN '12:45-13:30' THEN 6
-                        WHEN '13:35-14:20' THEN 7
-                        WHEN '14:25-15:10' THEN 8
-                        WHEN '15:15-16:00' THEN 9
-                        WHEN '16:25-17:10' THEN 10
-                        ELSE 99
-                    END
-            """, (czech_day,))
+                ORDER BY {order_by_clause}
+            """
+            
+            cur.execute(query, (czech_day,))
             
             db_rows = cur.fetchall()
             cur.close()
