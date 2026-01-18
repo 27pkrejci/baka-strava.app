@@ -1,0 +1,243 @@
+<html lang="en">
+<head>
+    <style>
+        body {
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }x
+        .container-lg {
+            max-width: 100%; /* Ensure the container does not exceed the viewport */
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+<section id="přehled" class="bg-light pt-4 pb-3">
+    <div class="container-lg">
+        <div class="text-center">
+            <h2>Školní přehled</h2>
+            <p class="lead text-muted">přehled dnešního rozvrhu hodin a obědu</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-8 col-md-4 col-lg-5">
+                <div class="card shadow mb-5 mt-3">
+                    <div class="card-body text-center py-4">
+                        <h4 class="card-title mb-3">Aktuální hodiny</h4>
+                        <ul class="list-group">
+                            <li class="list-group-item text-start">Předešlá:
+                                <div id="previous-period">
+                                <div class="card">
+                                    <div class="row my-1 justify-content-start">
+                                        <div class="col text-start ms-2">4.</div>
+                                        <div class="col text-end me-2">10:55-11:40</div>
+                                    </div>
+                                    <div class="card text-center">
+                                    <div class="row row-cols-1 slign-items-center justify-content-center">
+                                            <span class="col-2 badge text-bg-primary rounded-pill">02</span>
+                                            <div class="row">
+                                                <div class="col text-end">Cj</div>
+                                                <div class="col text-start">(Kea)</div>
+                                            </div>
+                                    </div>
+                                </div>
+                                </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item text-start active">Nynější:
+                                <div id="current-period">
+                                <div class="card">
+                                    <div class="row my-1 justify-content-start">
+                                        <div class="col text-start ms-2">5.</div>
+                                        <div class="col text-end me-2">11:50-12:35</div>
+                                    </div>
+                                    <div class="card text-center">
+                                    <div class="row row-cols-1 slign-items-center justify-content-center">
+                                            <span class="col-2 badge text-bg-secondary rounded-pill">02</span>
+                                            <div class="row">
+                                                <div class="col text-end">Cj</div>
+                                                <div class="col text-start">(Kea)</div>
+                                            </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item text-start">Následující:
+                                <div id="next-period">
+                                <div class="card">
+                                    <div class="row my-1 justify-content-start">
+                                        <div class="col text-start ms-2">6.</div>
+                                        <div class="col text-end me-2">12:45-13:30</div>
+                                    </div>
+                                    <div class="card text-center">
+                                    <div class="row row-cols-1 slign-items-center justify-content-center">
+                                            <span class="col-2 badge text-bg-primary rounded-pill">08</span>
+                                            <div class="row">
+                                                <div class="col text-end">Ch</div>
+                                                <div class="col text-start">(Ná)</div>
+                                            </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <a role="link" href="/rozvrh-hodin" class="btn btn-outline-primary btn-lg mt-3">Celý rozvrh hodin</a>
+                    </div>
+                </div>
+
+            </div>
+             <div class="col-8 col-md-6 col-lg-5">
+                <div class="card shadow mb-5 mt-3">
+                    <div class="card-body text-center py-4">
+                        <h4 class="card-title mb-3">Dnešní oběd</h4>
+                        <ul class="list-group">
+                            <li class="list-group-item text-start active">1:
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col ms-2">BULGURETO S DRŮBEŽÍM MASEM A ZELENINOU, SÝR, OKURKA</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item text-start">2:
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col ms-2">BULGUROVÝ NÁKYP S ČERVENOU ŘEPOU A SÝREM</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item text-start">polévka:
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col ms-2">LUŠTĚNINOVÁ S POHANKOU</div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="/rozvrh-obedu" class="btn btn-outline-primary btn-lg mt-3">Celý rozvrh obědů</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div.container-lg>
+</section>
+<div class="text-center text-muted small mt-3" id="last-update">
+    Poslední aktualizace: načítání...
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script>
+        // Map time slots to lesson order numbers
+        const TIME_SLOT_ORDER = {
+            "8:00- 8:45": 1, "8:55- 9:40": 2, "10:00-10:45": 3, "10:55-11:40": 4,
+            "11:50-12:35": 5, "12:45-13:30": 6, "13:35-14:20": 7, "14:25-15:10": 8,
+            "15:15-16:00": 9
+        };
+
+        async function updateTimetable() {
+            // Update last update time
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('last-update').textContent = `Poslední aktualizace: ${timeString}`;
+
+            try {
+                const response = await fetch('/api/current-period');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    // Update previous period
+                    if (data.previous) {
+                        const prevOrder = TIME_SLOT_ORDER[data.previous.time_slot] || '?';
+                        const prevLesson = data.previous.lessons[0] || {};
+                        const prevHtml = `
+                            <div class="card">
+                                <div class="row my-1 justify-content-start">
+                                    <div class="col text-start ms-2">${prevOrder}.</div>
+                                    <div class="col text-end me-2">${data.previous.time_slot}</div>
+                                </div>
+                                <div class="card text-center">
+                                    <div class="row row-cols-1 slign-items-center justify-content-center">
+                                        <span class="col-2 badge text-bg-primary rounded-pill">${prevLesson.room || ''}</span>
+                                        <div class="row">
+                                            <div class="col text-end">${prevLesson.subject || ''}</div>
+                                            <div class="col text-start">(${prevLesson.teacher || ''})</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('previous-period').innerHTML = prevHtml;
+                    } else {
+                        document.getElementById('previous-period').innerHTML = '<p>Žádná předchozí hodina</p>';
+                    }
+
+                    // Update current period
+                    if (data.current) {
+                        const currOrder = TIME_SLOT_ORDER[data.current.time_slot] || '?';
+                        const currLesson = data.current.lessons[0] || {};
+                        const currHtml = `
+                            <div class="card">
+                                <div class="row my-1 justify-content-start">
+                                    <div class="col text-start ms-2">${currOrder}.</div>
+                                    <div class="col text-end me-2">${data.current.time_slot}</div>
+                                </div>
+                                <div class="card text-center">
+                                    <div class="row row-cols-1 slign-items-center justify-content-center">
+                                        <span class="col-2 badge text-bg-secondary rounded-pill">${currLesson.room || ''}</span>
+                                        <div class="row">
+                                            <div class="col text-end">${currLesson.subject || ''}</div>
+                                            <div class="col text-start">(${currLesson.teacher || ''})</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('current-period').innerHTML = currHtml;
+                    } else {
+                        document.getElementById('current-period').innerHTML = '<p>Žádná aktuální hodina</p>';
+                    }
+
+                    // Update next period
+                    if (data.next) {
+                        const nextOrder = TIME_SLOT_ORDER[data.next.time_slot] || '?';
+                        const nextLesson = data.next.lessons[0] || {};
+                        const nextHtml = `
+                            <div class="card">
+                                <div class="row my-1 justify-content-start">
+                                    <div class="col text-start ms-2">${nextOrder}.</div>
+                                    <div class="col text-end me-2">${data.next.time_slot}</div>
+                                </div>
+                                <div class="card text-center">
+                                    <div class="row row-cols-1 slign-items-center justify-content-center">
+                                        <span class="col-2 badge text-bg-primary rounded-pill">${nextLesson.room || ''}</span>
+                                        <div class="row">
+                                            <div class="col text-end">${nextLesson.subject || ''}</div>
+                                            <div class="col text-start">(${nextLesson.teacher || ''})</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('next-period').innerHTML = nextHtml;
+                    } else {
+                        document.getElementById('next-period').innerHTML = '<p>Žádná následující hodina</p>';
+                    }
+                } else {
+                    // Handle errors or weekend
+                    const message = data.message || 'Chyba při načítání rozvrhu';
+                    document.getElementById('previous-period').innerHTML = `<p>${message}</p>`;
+                    document.getElementById('current-period').innerHTML = `<p>${message}</p>`;
+                    document.getElementById('next-period').innerHTML = `<p>${message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error fetching timetable:', error);
+                // Optionally show error in UI
+            }
+        }
+
+        // Initial load
+        updateTimetable();
+
+        // Update every 30 seconds
+        setInterval(updateTimetable, 30000);
+    </script>
+</body>
+</html>
