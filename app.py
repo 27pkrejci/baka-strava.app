@@ -9,6 +9,7 @@ from scbc.config import DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT
 from scbc.scheduler import schedule_update_task, stop_scheduler
 from stsc import schedule_lunch_updates, stop_lunch_scheduler
 from timetable_api import find_current_period
+from lunch_api import get_lunch_schedule
 
 
 app = Flask(__name__)
@@ -245,6 +246,15 @@ def today_lunch():
 
         return json.dumps(result, ensure_ascii=False, indent=2)
 
+    except Exception as e:
+        return json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False, indent=2)
+
+@app.route('/api/lunch-schedule')
+def lunch_schedule_api():
+    """Return JSON with lunch schedule for 6 days."""
+    try:
+        schedule = get_lunch_schedule(get_db_connection, days=6)
+        return json.dumps(schedule, ensure_ascii=False, indent=2)
     except Exception as e:
         return json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False, indent=2)
 

@@ -9,4 +9,3 @@ SQLAlchemy==2.0.19
 alembic==1.11.1
 apscheduler=3.11.2
 strava-cz==0.1.3
-
