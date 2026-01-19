@@ -211,6 +211,43 @@ def current_period():
     data = find_current_period(get_db_connection)
     return json.dumps(data, ensure_ascii=False, indent=2)
 
+
+@app.route('/api/today-lunch')
+def today_lunch():
+    """Return JSON for today's lunch matching frontend keys: soup, first, second, doplněk."""
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT meal_type, name FROM lunch WHERE date = CURRENT_DATE;")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        result = {"soup": None, "first": None, "second": None, "doplněk": None}
+
+        for meal_type, name in rows:
+            mt = (meal_type or '').strip().lower()
+            if 'pol' in mt or 'soup' in mt:
+                result['soup'] = name
+            elif 'dopln' in mt or 'dop' in mt:
+                result['doplněk'] = name
+            elif mt.startswith('1') or mt in ('1', 'first'):
+                result['first'] = name
+            elif mt.startswith('2') or mt in ('2', 'second'):
+                result['second'] = name
+            else:
+                if '1' in mt:
+                    result['first'] = name
+                elif '2' in mt:
+                    result['second'] = name
+                else:
+                    result.setdefault(mt, name)
+
+        return json.dumps(result, ensure_ascii=False, indent=2)
+
+    except Exception as e:
+        return json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False, indent=2)
+
 @app.route('/rozvrh-hodin')
 def rozvrh_hodin():
     return render_template('rozvrh-hodin.html')

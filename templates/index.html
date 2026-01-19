@@ -25,60 +25,14 @@
                     <div class="card-body text-center py-4">
                         <h4 class="card-title mb-3">Aktuální hodiny</h4>
                         <ul class="list-group">
-                            <li class="list-group-item text-start">Předešlá:
-                                <div id="previous-period">
-                                <div class="card">
-                                    <div class="row my-1 justify-content-start">
-                                        <div class="col text-start ms-2">4.</div>
-                                        <div class="col text-end me-2">10:55-11:40</div>
-                                    </div>
-                                    <div class="card text-center">
-                                    <div class="row row-cols-1 slign-items-center justify-content-center">
-                                            <span class="col-2 badge text-bg-primary rounded-pill">02</span>
-                                            <div class="row">
-                                                <div class="col text-end">Cj</div>
-                                                <div class="col text-start">(Kea)</div>
-                                            </div>
-                                    </div>
-                                </div>
-                                </div>
-                                </div>
+                            <li class="list-group-item text-start"><b>Předešlá:</b>
+                                <div id="previous-period">Načítání...</div>
                             </li>
-                            <li class="list-group-item text-start active">Nynější:
-                                <div id="current-period">
-                                <div class="card">
-                                    <div class="row my-1 justify-content-start">
-                                        <div class="col text-start ms-2">5.</div>
-                                        <div class="col text-end me-2">11:50-12:35</div>
-                                    </div>
-                                    <div class="card text-center">
-                                    <div class="row row-cols-1 slign-items-center justify-content-center">
-                                            <span class="col-2 badge text-bg-secondary rounded-pill">02</span>
-                                            <div class="row">
-                                                <div class="col text-end">Cj</div>
-                                                <div class="col text-start">(Kea)</div>
-                                            </div>
-                                    </div>
-                                </div>
-                                </div>
+                            <li class="list-group-item text-start active"><b>Nynější:</b>
+                                <div id="current-period">Načítání...</div>
                             </li>
-                            <li class="list-group-item text-start">Následující:
-                                <div id="next-period">
-                                <div class="card">
-                                    <div class="row my-1 justify-content-start">
-                                        <div class="col text-start ms-2">6.</div>
-                                        <div class="col text-end me-2">12:45-13:30</div>
-                                    </div>
-                                    <div class="card text-center">
-                                    <div class="row row-cols-1 slign-items-center justify-content-center">
-                                            <span class="col-2 badge text-bg-primary rounded-pill">08</span>
-                                            <div class="row">
-                                                <div class="col text-end">Ch</div>
-                                                <div class="col text-start">(Ná)</div>
-                                            </div>
-                                    </div>
-                                </div>
-                                </div>
+                            <li class="list-group-item text-start"><b>Následující:</b>
+                                <div id="next-period">Načítání...</div>
                             </li>
                         </ul>
                         <a role="link" href="/rozvrh-hodin" class="btn btn-outline-primary btn-lg mt-3">Celý rozvrh hodin</a>
@@ -91,24 +45,32 @@
                     <div class="card-body text-center py-4">
                         <h4 class="card-title mb-3">Dnešní oběd</h4>
                         <ul class="list-group">
-                            <li class="list-group-item text-start active">1:
+                            <li class="list-group-item text-start"><b>Polévka:</b>
                                 <div class="card">
                                     <div class="row">
-                                        <div class="col ms-2">BULGURETO S DRŮBEŽÍM MASEM A ZELENINOU, SÝR, OKURKA</div>
+                                        <div class="col ms-2" id="lunch-soup">Načítání...</div>
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item text-start">2:
+                            <li class="list-group-item text-start"><b>1:</b>
                                 <div class="card">
                                     <div class="row">
-                                        <div class="col ms-2">BULGUROVÝ NÁKYP S ČERVENOU ŘEPOU A SÝREM</div>
+                                        <div class="col ms-2" id="lunch-first">Načítání...</div>
                                     </div>
                                 </div>
                             </li>
-                            <li class="list-group-item text-start">polévka:
+                            <li class="list-group-item text-start"><b>2:</b>
                                 <div class="card">
                                     <div class="row">
-                                        <div class="col ms-2">LUŠTĚNINOVÁ S POHANKOU</div>
+                                        <div class="col ms-2" id="lunch-second">Načítání...</div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="list-group-item text-start"><b>Doplněk:</b>
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col ms-2" id="lunch-dopln">Načítání...</div>
                                     </div>
                                 </div>
                             </li>
@@ -181,7 +143,7 @@
                                 </div>
                                 <div class="card text-center">
                                     <div class="row row-cols-1 slign-items-center justify-content-center">
-                                        <span class="col-2 badge text-bg-secondary rounded-pill">${currLesson.room || ''}</span>
+                                        <span class="col-2 badge text-bg-primary rounded-pill">${currLesson.room || ''}</span>
                                         <div class="row">
                                             <div class="col text-end">${currLesson.subject || ''}</div>
                                             <div class="col text-start">(${currLesson.teacher || ''})</div>
@@ -238,6 +200,36 @@
 
         // Update every 30 seconds
         setInterval(updateTimetable, 30000);
+        
+        // Fetch today's lunch and update the lunch card
+        async function updateLunch() {
+            try {
+                const res = await fetch('/api/today-lunch');
+                const data = await res.json();
+
+                // If API returned error-style object
+                if (data && data.status === 'error') {
+                    const msg = data.message || 'Nelze načíst oběd';
+                    document.getElementById('lunch-first').textContent = msg;
+                    document.getElementById('lunch-second').textContent = msg;
+                    document.getElementById('lunch-soup').textContent = msg;
+                    document.getElementById('lunch-dopln').textContent = msg;
+                    return;
+                }
+
+                document.getElementById('lunch-first').textContent = data.first || '';
+                document.getElementById('lunch-second').textContent = data.second || '';
+                // 'doplněk' contains a non-ascii key, access with bracket notation
+                document.getElementById('lunch-dopln').textContent = data['doplněk'] || data.dopln || '';
+                document.getElementById('lunch-soup').textContent = data.soup || '';
+            } catch (err) {
+                console.error('Error fetching lunch:', err);
+            }
+        }
+
+        // Initial lunch load and periodic refresh
+        updateLunch();
+        setInterval(updateLunch, 60000);
     </script>
 </body>
 </html>

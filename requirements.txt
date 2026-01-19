@@ -7,3 +7,5 @@ beautifulsoup4==4.12.2
 APScheduler==3.10.1
 SQLAlchemy==2.0.19
 alembic==1.11.1
+apscheduler
+strava-cz==0.1.3
