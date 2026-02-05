@@ -16,7 +16,7 @@
         <nav class="navbar bg-primary">
             <div class="container-fluid">
                 <div class="card col-1 text-center bg-light">
-                    <a href="#" class="icon-link icon-link-hover ms-3" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" href="#">
+                    <a href="/profile" class="icon-link icon-link-hover ms-3" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);">
                         <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
                             <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
                             <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
@@ -51,7 +51,7 @@
                                 <div id="next-period">Načítání...</div>
                             </li>
                         </ul>
-                        <a role="link" href="/rozvrh-hodin" class="btn btn-outline-primary btn-lg mt-3">Celý rozvrh hodin</a>
+                        <a role="link" href="/rozvrh-hodin" class="btn btn-outline-primary btn-lg mt-3">Rozvrh hodin</a>
                     </div>
                 </div>
 
@@ -91,7 +91,7 @@
                                 </div>
                             </li>
                         </ul>
-                        <a href="/rozvrh-obedu" class="btn btn-outline-primary btn-lg mt-3">Celý rozvrh obědů</a>
+                        <a href="/rozvrh-obedu" class="btn btn-outline-primary btn-lg mt-3">Rozvrh obědů</a>
                     </div>
                 </div>
             </div>
@@ -121,10 +121,28 @@
                 const data = await response.json();
 
                 if (data.status === 'success') {
+                    // Helper to pick lesson matching selected groups (or any with no group)
+                    function pickLesson(lessons) {
+                        if (!lessons || !lessons.length) return null;
+                        let selected = [];
+                        try { selected = JSON.parse(localStorage.getItem('selectedGroups') || '[]'); } catch (e) { selected = []; }
+                        // If no groups selected, return first lesson
+                        if (!selected.length) return lessons[0];
+                        // Prefer lessons matching selected groups
+                        for (const l of lessons) {
+                            if (selected.includes(l.group)) return l;
+                        }
+                        // Fall back to any lesson with no/empty group
+                        for (const l of lessons) {
+                            if (!l.group || l.group === '') return l;
+                        }
+                        return null;
+                    }
+
                     // Update previous period
                     if (data.previous) {
                         const prevOrder = TIME_SLOT_ORDER[data.previous.time_slot] || '?';
-                        const prevLesson = data.previous.lessons[0] || {};
+                        const prevLesson = pickLesson(data.previous.lessons) || {};
                         const prevHtml = `
                             <div class="card">
                                 <div class="row my-1 justify-content-start">
@@ -150,7 +168,7 @@
                     // Update current period
                     if (data.current) {
                         const currOrder = TIME_SLOT_ORDER[data.current.time_slot] || '?';
-                        const currLesson = data.current.lessons[0] || {};
+                        const currLesson = pickLesson(data.current.lessons) || {};
                         const currHtml = `
                             <div class="card">
                                 <div class="row my-1 justify-content-start">
@@ -176,7 +194,7 @@
                     // Update next period
                     if (data.next) {
                         const nextOrder = TIME_SLOT_ORDER[data.next.time_slot] || '?';
-                        const nextLesson = data.next.lessons[0] || {};
+                        const nextLesson = pickLesson(data.next.lessons) || {};
                         const nextHtml = `
                             <div class="card">
                                 <div class="row my-1 justify-content-start">

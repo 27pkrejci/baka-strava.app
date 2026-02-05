@@ -10,8 +10,10 @@ from scbc.scheduler import schedule_update_task, stop_scheduler
 from stsc import schedule_lunch_updates, stop_lunch_scheduler
 from timetable_api import find_current_period
 from lunch_api import get_lunch_schedule
+from week_schedule_api import get_week_schedule
 
 
+from flask import request
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
@@ -55,19 +57,19 @@ with app.app_context():
 
 @app.before_request
 def initialize_database():
-    # Only run once
-    if not hasattr(app, 'initialized'):
-        app.initialized = True
+    # Use Flask's config to store initialization state
+    if not app.config.get('DB_INITIALIZED'):
+        app.config['DB_INITIALIZED'] = True
         # Start the background schedulers for automatic updates
         try:
-            schedule_update_task(hours=1)  # Update schedules every hour
-            logger.info("✅ Schedule updater initialized")
+            schedule_update_task(hours=1)
+            logger.info("Schedule updater initialized")
         except Exception as e:
             logger.error(f"Failed to initialize schedule scheduler: {e}")
         
         try:
-            schedule_lunch_updates(hour=6, minute=0)  # Update lunch menu daily at 6 AM
-            logger.info("✅ Lunch menu updater initialized")
+            schedule_lunch_updates(hour=6, minute=0)
+            logger.info("Lunch menu updater initialized")
         except Exception as e:
             logger.error(f"Failed to initialize lunch scheduler: {e}")
 
@@ -257,6 +259,37 @@ def lunch_schedule_api():
         return json.dumps(schedule, ensure_ascii=False, indent=2)
     except Exception as e:
         return json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False, indent=2)
+
+@app.route('/api/week-schedule')
+def week_schedule_api():
+    """Return JSON with week schedule (Monday-Friday)."""
+    try:
+        schedule = get_week_schedule(get_db_connection)
+        return json.dumps(schedule, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False, indent=2)
+
+
+@app.route('/api/groups')
+def groups_api():
+    """Return JSON list of distinct groups available in the timetable."""
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT DISTINCT "group" FROM timetable_3p WHERE "group" IS NOT NULL AND "group" <> %s ORDER BY "group";', ('',))
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        groups = [r[0] for r in rows if r[0]]
+        return json.dumps({'groups': groups}, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False, indent=2)
+
+
+@app.route('/profile')
+def profile_page():
+    return render_template('profile.html')
 
 @app.route('/rozvrh-hodin')
 def rozvrh_hodin():

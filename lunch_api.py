@@ -84,8 +84,7 @@ class LunchRepository:
                 day_of_week = current_date.strftime('%A')
                 czech_day_name = CZECH_DAY_NAMES.get(day_of_week, day_of_week)
                 
-                # Format date as "DD.M." (e.g., "19.1.")
-                formatted_date = current_date.strftime('%d.%-m.').lstrip('0').replace('0', '', 1) if current_date.day < 10 else current_date.strftime('%d.%m.')
+                # Format date as "DD.M." (e.g., "19.1.") in a platform-independent way
                 formatted_date = f"{current_date.day}.{current_date.month}."
                 
                 meals = lunch_by_date.get(current_date, {

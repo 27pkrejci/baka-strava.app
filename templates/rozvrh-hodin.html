@@ -4,16 +4,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
+    <style>
+        #schedule-tbody th[scope="row"] {
+            vertical-align: middle !important; /* Centers text vertically */
+            text-align: center !important;    /* Centers text horizontally */
+        }
+        /* Space above the text */
+        .button-container-spacing {
+            margin-top: 4rem !important; 
+        }
+    
+    </style>
+
+</head>
+
+
 
         <nav class="navbar bg-primary">
             <div class="container-fluid">
                 <div class="card col-1 text-center bg-light">
-                    <a href="http://127.0.0.1:5500/index.html#" class="icon-link icon-link-hover ms-3" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" href="#">
+                    <a href="/" class="icon-link icon-link-hover ms-3" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);">
                         <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
                             <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
                             <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
                         </svg>
-                        domovská stránka
+                        Domovská stránka
                     </a>
                 </div>
             </div>
@@ -31,7 +46,7 @@
 <body style="background-color:#f8f9fa;"></body>
 
     <div class="container px-5">
-            <table class="table table-bordered text-center">
+            <table class="table table-bordered text-center" id="schedule-table">
                 <thead class="table-dark">
                     <tr>
                     <th scope="col"></th>
@@ -45,7 +60,7 @@
                     </th>
                     <th scope="col">
                         <h4>3</h4>
-                        <p class="my-0">10.00-10:45</p>
+                        <p class="my-0">10:00-10:45</p>
                     </th>
                     <th scope="col">
                         <h4>4</h4>
@@ -72,490 +87,186 @@
                         <p class="my-0">15:15-16:00</p>
                     </th>
                 </thead>
-                <tbody>
-                    <tr>
-                    <th scope="row">
-                        <div class="col">Po</div>
-                    </th>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <th scope="row">
-                        <div class="col">Út</div>
-                    </th>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <th scope="row">
-                        <div class="col">St</div>
-                    </th>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <th scope="row">
-                        <div class="col">Čt</div>
-                    </th>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    </tr>
-                    <tr>
-                    <th scope="row">
-                        <div class="col">Pá</div>
-                    </th>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="row">
-                            <div class="col text-start">sk</div>
-                            <div class="col text-end">#</div>
-                        </div>
-                        <div class="row row-cols-1">
-                            <div class="col text-center fw-bold">Pt</div>
-                            <div class="col text-center">Prof</div>
-                        </div>
-                    </td>
-                    </tr>
+                <tbody id="schedule-tbody">
+                    <!-- Schedule rows will be inserted here dynamically -->
                 </tbody>
             </table>
+    </div>
+    <div class="container px-5 text-center mt-5 mb-4">
+                <label class="me-2">Týden:</label>
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="week-option" id="week-all" value="all" checked>
+                    <label class="btn btn-outline-primary" for="week-all">Všechny</label>
+
+                    <input type="radio" class="btn-check" name="week-option" id="week-even" value="S">
+                    <label class="btn btn-outline-primary" for="week-even">Sudý</label>
+
+                    <input type="radio" class="btn-check" name="week-option" id="week-odd" value="L">
+                    <label class="btn btn-outline-primary" for="week-odd">Lichý</label>
+                </div>
     </div>
 </section>
 
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-</body>
-</html>
+    <script>
+        const TIME_SLOTS = [
+            "8:00- 8:45", "8:55- 9:40", "10:00-10:45", "10:55-11:40",
+            "11:50-12:35", "12:45-13:30", "13:35-14:20", "14:25-15:10",
+            "15:15-16:00"
+        ];
+
+        const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        
+        const DAYS_FORMATTED = {
+            'Monday': 'Po',
+            'Tuesday': 'Út',
+            'Wednesday': 'St',
+            'Thursday': 'Čt',
+            'Friday': 'Pá'
+        };
+
+        function getSelectedGroups() {
+            try {
+                return JSON.parse(localStorage.getItem('selectedGroups') || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function getSelectedWeek() {
+            // Check if there's a query parameter or default to 'all'
+            // This doesn't persist across navigations
+            return new URLSearchParams(window.location.search).get('week') || 'all';
+        }
+
+        function setSelectedWeek(week) {
+            // Update URL without reloading
+            const url = new URL(window.location);
+            if (week === 'all') {
+                url.searchParams.delete('week');
+            } else {
+                url.searchParams.set('week', week);
+            }
+            window.history.replaceState({}, '', url);
+        }
+
+        function shouldShowLesson(lesson, selectedWeek) {
+            // If week is empty/null, show it every week
+            if (!lesson.week || lesson.week === '') {
+                return true;
+            }
+            // If selectedWeek is 'all', show everything
+            if (selectedWeek === 'all') {
+                return true;
+            }
+            // Show only if week matches selected week (S for Sudý, L for Lichý)
+            return lesson.week === selectedWeek;
+        }
+
+        async function loadWeekSchedule() {
+            try {
+                const response = await fetch('/api/week-schedule');
+                const schedule = await response.json();
+
+                if (schedule.status === 'error') {
+                    document.getElementById('schedule-tbody').innerHTML = 
+                        `<tr><td colspan="10" class="text-danger text-center">${schedule.message}</td></tr>`;
+                    return;
+                }
+
+                const selected = new Set(getSelectedGroups());
+                const selectedWeek = getSelectedWeek();
+
+                let html = '';
+
+                for (const englishDay of DAYS) {
+                    const dayData = schedule[englishDay];
+                    if (!dayData) continue;
+
+                    html += `
+                    <tr>
+                        <th scope="row">
+                            <div class="col">${DAYS_FORMATTED[englishDay]}</div>
+                        </th>
+                    `;
+
+                    for (const timeSlot of TIME_SLOTS) {
+                        let lessons = dayData.lessons[timeSlot] || [];
+
+                        // If user selected groups, show selected groups + lessons with no group
+                        if (selected.size > 0) {
+                            lessons = lessons.filter(l => !l.group || l.group === '' || selected.has(l.group));
+                        }
+
+                        // Filter by week (S=Sudý/even, L=Lichý/odd, empty=every week)
+                        lessons = lessons.filter(l => shouldShowLesson(l, selectedWeek));
+
+                        if (!lessons || lessons.length === 0) {
+                            html += `<td></td>`;
+                            continue;
+                        }
+
+                        if (lessons.length === 1) {
+                            const lesson = lessons[0];
+                            html += `
+                            <td>
+                                <div class="row">
+                                    <div class="col text-start">${lesson.group || '-'}</div>
+                                    <div class="col text-end">${lesson.room || '-'}</div>
+                                </div>
+                                <div class="row row-cols-1">
+                                    <div class="col text-center fw-bold">${lesson.subject || '-'}</div>
+                                    <div class="col text-center">${lesson.teacher || '-'}</div>
+                                </div>
+                            </td>
+                            `;
+                        } else {
+                            html += `
+                            <td class="bg-warning-subtle">
+                                <small>Multiple groups:</small>
+                            `;
+                            for (const lesson of lessons) {
+                                html += `
+                                <div class="row mb-1">
+                                    <div class="col text-start"><small>${lesson.group || '-'}</small></div>
+                                    <div class="col text-end"><small>${lesson.room || '-'}</small></div>
+                                </div>
+                                <div class="row row-cols-1">
+                                    <div class="col text-center fw-bold"><small>${lesson.subject || '-'}</small></div>
+                                    <div class="col text-center"><small>${lesson.teacher || '-'}</small></div>
+                                </div>
+                                `;
+                            }
+                            html += `</td>`;
+                        }
+                    }
+
+                    html += `</tr>`;
+                }
+
+                document.getElementById('schedule-tbody').innerHTML = html;
+            } catch (error) {
+                console.error('Error loading week schedule:', error);
+                document.getElementById('schedule-tbody').innerHTML = 
+                    `<tr><td colspan="10" class="text-danger text-center">Error loading schedule: ${error.message}</td></tr>`;
+            }
+        }
+
+        // Load schedule on page load
+        loadWeekSchedule();
+
+        // Set initial week button state from localStorage
+        const savedWeek = getSelectedWeek();
+        document.getElementById(`week-${savedWeek}`).checked = true;
+
+        // Add event listeners to week toggle buttons
+        document.querySelectorAll('input[name="week-option"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                setSelectedWeek(e.target.value);
+                loadWeekSchedule();
+            });
+        });
+    </script>
 
