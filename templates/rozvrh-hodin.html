@@ -107,166 +107,37 @@
     </div>
 </section>
 
+<!-- Templates for schedule cells -->
+<template id="lesson-cell-template">
+    <td>
+        <div class="row">
+            <div class="col text-start group-text"></div>
+            <div class="col text-end room-text"></div>
+        </div>
+        <div class="row row-cols-1">
+            <div class="col text-center fw-bold subject-text"></div>
+            <div class="col text-center teacher-text"></div>
+        </div>
+    </td>
+</template>
 
+<template id="multiple-lessons-cell-template">
+    <td class="bg-warning-subtle">
+        <small>Multiple groups:</small>
+    </td>
+</template>
+
+<template id="lesson-item-template">
+    <div class="row mb-1">
+        <div class="col text-start"><small class="group-text"></small></div>
+        <div class="col text-end"><small class="room-text"></small></div>
+    </div>
+    <div class="row row-cols-1">
+        <div class="col text-center fw-bold"><small class="subject-text"></small></div>
+        <div class="col text-center"><small class="teacher-text"></small></div>
+    </div>
+</template>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script>
-        const TIME_SLOTS = [
-            "8:00- 8:45", "8:55- 9:40", "10:00-10:45", "10:55-11:40",
-            "11:50-12:35", "12:45-13:30", "13:35-14:20", "14:25-15:10",
-            "15:15-16:00"
-        ];
-
-        const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-        
-        const DAYS_FORMATTED = {
-            'Monday': 'Po',
-            'Tuesday': 'Út',
-            'Wednesday': 'St',
-            'Thursday': 'Čt',
-            'Friday': 'Pá'
-        };
-
-        function getSelectedGroups() {
-            try {
-                return JSON.parse(localStorage.getItem('selectedGroups') || '[]');
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function getSelectedWeek() {
-            // Check if there's a query parameter or default to 'all'
-            // This doesn't persist across navigations
-            return new URLSearchParams(window.location.search).get('week') || 'all';
-        }
-
-        function setSelectedWeek(week) {
-            // Update URL without reloading
-            const url = new URL(window.location);
-            if (week === 'all') {
-                url.searchParams.delete('week');
-            } else {
-                url.searchParams.set('week', week);
-            }
-            window.history.replaceState({}, '', url);
-        }
-
-        function shouldShowLesson(lesson, selectedWeek) {
-            // If week is empty/null, show it every week
-            if (!lesson.week || lesson.week === '') {
-                return true;
-            }
-            // If selectedWeek is 'all', show everything
-            if (selectedWeek === 'all') {
-                return true;
-            }
-            // Show only if week matches selected week (S for Sudý, L for Lichý)
-            return lesson.week === selectedWeek;
-        }
-
-        async function loadWeekSchedule() {
-            try {
-                const response = await fetch('/api/week-schedule');
-                const schedule = await response.json();
-
-                if (schedule.status === 'error') {
-                    document.getElementById('schedule-tbody').innerHTML = 
-                        `<tr><td colspan="10" class="text-danger text-center">${schedule.message}</td></tr>`;
-                    return;
-                }
-
-                const selected = new Set(getSelectedGroups());
-                const selectedWeek = getSelectedWeek();
-
-                let html = '';
-
-                for (const englishDay of DAYS) {
-                    const dayData = schedule[englishDay];
-                    if (!dayData) continue;
-
-                    html += `
-                    <tr>
-                        <th scope="row">
-                            <div class="col">${DAYS_FORMATTED[englishDay]}</div>
-                        </th>
-                    `;
-
-                    for (const timeSlot of TIME_SLOTS) {
-                        let lessons = dayData.lessons[timeSlot] || [];
-
-                        // If user selected groups, show selected groups + lessons with no group
-                        if (selected.size > 0) {
-                            lessons = lessons.filter(l => !l.group || l.group === '' || selected.has(l.group));
-                        }
-
-                        // Filter by week (S=Sudý/even, L=Lichý/odd, empty=every week)
-                        lessons = lessons.filter(l => shouldShowLesson(l, selectedWeek));
-
-                        if (!lessons || lessons.length === 0) {
-                            html += `<td></td>`;
-                            continue;
-                        }
-
-                        if (lessons.length === 1) {
-                            const lesson = lessons[0];
-                            html += `
-                            <td>
-                                <div class="row">
-                                    <div class="col text-start">${lesson.group || '-'}</div>
-                                    <div class="col text-end">${lesson.room || '-'}</div>
-                                </div>
-                                <div class="row row-cols-1">
-                                    <div class="col text-center fw-bold">${lesson.subject || '-'}</div>
-                                    <div class="col text-center">${lesson.teacher || '-'}</div>
-                                </div>
-                            </td>
-                            `;
-                        } else {
-                            html += `
-                            <td class="bg-warning-subtle">
-                                <small>Multiple groups:</small>
-                            `;
-                            for (const lesson of lessons) {
-                                html += `
-                                <div class="row mb-1">
-                                    <div class="col text-start"><small>${lesson.group || '-'}</small></div>
-                                    <div class="col text-end"><small>${lesson.room || '-'}</small></div>
-                                </div>
-                                <div class="row row-cols-1">
-                                    <div class="col text-center fw-bold"><small>${lesson.subject || '-'}</small></div>
-                                    <div class="col text-center"><small>${lesson.teacher || '-'}</small></div>
-                                </div>
-                                `;
-                            }
-                            html += `</td>`;
-                        }
-                    }
-
-                    html += `</tr>`;
-                }
-
-                document.getElementById('schedule-tbody').innerHTML = html;
-            } catch (error) {
-                console.error('Error loading week schedule:', error);
-                document.getElementById('schedule-tbody').innerHTML = 
-                    `<tr><td colspan="10" class="text-danger text-center">Error loading schedule: ${error.message}</td></tr>`;
-            }
-        }
-
-        // Load schedule on page load
-        loadWeekSchedule();
-
-        // Set initial week button state from localStorage
-        const savedWeek = getSelectedWeek();
-        document.getElementById(`week-${savedWeek}`).checked = true;
-
-        // Add event listeners to week toggle buttons
-        document.querySelectorAll('input[name="week-option"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                setSelectedWeek(e.target.value);
-                loadWeekSchedule();
-            });
-        });
-    </script>
+    <script src="/static/js/schedule.js"></script>
 
