@@ -35,13 +35,15 @@ def upload_schedule(code: str, class_name: str, confirm: bool = True, dry_run: b
         raise RuntimeError("No entries parsed; aborting upload")
 
     if debug:
-        # print the parsed entries in a readable table-like form
-        print("\nParsed entries:")
-        for e in entries:
-            print(f"  {e['day']} {e['time_slot']} - {e['subject']}"
-                  f" (group={e['group']}, teacher={e['teacher']}, room={e['room']})")
-        print()
-
+            # print the parsed entries in a readable table-like form
+            print("\nParsed entries:")
+            for e in entries:
+                line = f"  {e['day']} {e['time_slot']} - {e['subject']}"
+                line += f" (group={e['group']}, teacher={e['teacher']}, room={e['room']})"
+                if e.get('week'):
+                    line += f" [week={e['week']}]"
+                print(line)
+            print()
     if dry_run:
         print(f"[DRY RUN] Would upload {len(entries)} entries for {class_name}")
         return len(entries)
@@ -53,9 +55,9 @@ def upload_schedule(code: str, class_name: str, confirm: bool = True, dry_run: b
 
     db = ScheduleDB()
     try:
-        print(f"📝 Replacing schedule for '{class_name}' (delete old, insert new) ...")
+        print(f"[UPDATING] Replacing schedule for '{class_name}' (delete old, insert new) ...")
         count = db.replace_schedule_entries(class_name, entries)
-        print(f"✅ Successfully saved {count} entries!")
+        print(f"[OK] Successfully saved {count} entries!")
         return count
     finally:
         db.disconnect()

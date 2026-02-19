@@ -48,6 +48,13 @@ def parse_subject(cell):
     full_text = (cell.get("text") or "").strip()
     elem = cell.get("elem")
 
+    week = None
+    m = re.match(r"^([LSls])\s*:\s*(.*)$", full_text)
+    if m:
+        marker = m.group(1).upper()
+        week = "odd" if marker == "L" else "even"
+        full_text = m.group(2).strip()
+
     subject = None
     teacher = None
     room = None

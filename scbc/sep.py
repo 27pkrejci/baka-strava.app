@@ -51,7 +51,7 @@ def sep_schedule(raw_schedule):
                 col_idx += 1
                 continue
 
-            subject, teacher, room, group = parse_subject(cell)
+            subject, teacher, room, group, week = parse_subject(cell)
 
             if not subject:
                 col_idx += 1
@@ -69,8 +69,7 @@ def sep_schedule(raw_schedule):
             ts_idx = box_idx if box_idx < len(time_slots) else len(time_slots) - 1
             time_slot = time_slots[ts_idx]
 
-            structured_schedule.append(
-                {
+            entry = {
                     "rid": rid,
                     "day": current_day,
                     "time_slot": time_slot,
@@ -78,8 +77,10 @@ def sep_schedule(raw_schedule):
                     "group": group,
                     "teacher": teacher,
                     "room": room,
-                }
-            )
+            }
+            if week:
+                entry["week"] = week
+            structured_schedule.append(entry)
             rid += 1
 
             day_grid[box_idx] = rowspan

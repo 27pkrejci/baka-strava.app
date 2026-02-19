@@ -75,7 +75,8 @@ class ScheduleDB:
                 subject TEXT,
                 "group" TEXT,
                 teacher TEXT,
-                room TEXT
+                room TEXT,
+                week TEXT
             );
             """
         ).format(tbl=sql.Identifier(CENTRAL_TABLE_NAME))
@@ -89,7 +90,7 @@ class ScheduleDB:
         )
         cur.execute(idx_sql)
 
-        for col in ["class_name", "day", "time_slot", "subject", "group", "teacher", "room"]:
+        for col in ["class_name", "day", "time_slot", "subject", "group", "teacher", "room", "week"]:
             cur.execute(sql.SQL("ALTER TABLE {tbl} ADD COLUMN IF NOT EXISTS {col} TEXT;").format(
                 tbl=sql.Identifier(CENTRAL_TABLE_NAME),
                 col=sql.Identifier(col),
@@ -184,9 +185,10 @@ class ScheduleDB:
                 e.get("group"),
                 e.get("teacher"),
                 e.get("room"),
+                e.get("week"),
             ))
 
-        insert_sql = sql.SQL("INSERT INTO {tbl} (class_name, day, time_slot, subject, \"group\", teacher, room) VALUES %s").format(
+        insert_sql = sql.SQL("INSERT INTO {tbl} (class_name, day, time_slot, subject, \"group\", teacher, room, week) VALUES %s").format(
             tbl=sql.Identifier(CENTRAL_TABLE_NAME)
         )
 
@@ -236,9 +238,10 @@ class ScheduleDB:
                         e.get("group"),
                         e.get("teacher"),
                         e.get("room"),
+                        e.get("week"),
                     ))
 
-                insert_sql = sql.SQL("INSERT INTO {tbl} (class_name, day, time_slot, subject, \"group\", teacher, room) VALUES %s").format(
+                insert_sql = sql.SQL("INSERT INTO {tbl} (class_name, day, time_slot, subject, \"group\", teacher, room, week) VALUES %s").format(
                     tbl=sql.Identifier(CENTRAL_TABLE_NAME)
                 )
                 execute_values(cur, insert_sql.as_string(conn), data)
@@ -260,7 +263,7 @@ class ScheduleDB:
             return []
         cur = conn.cursor()
         try:
-            cur.execute(sql.SQL("SELECT day, time_slot, subject, \"group\", teacher, room FROM {tbl} WHERE class_name = %s ORDER BY day, time_slot;").format(tbl=sql.Identifier(CENTRAL_TABLE_NAME)), (class_name,))
+            cur.execute(sql.SQL("SELECT day, time_slot, subject, \"group\", teacher, room, week FROM {tbl} WHERE class_name = %s ORDER BY day, time_slot;").format(tbl=sql.Identifier(CENTRAL_TABLE_NAME)), (class_name,))
             cols = [d[0] for d in cur.description]
             rows = cur.fetchall()
             return [dict(zip(cols, r)) for r in rows]

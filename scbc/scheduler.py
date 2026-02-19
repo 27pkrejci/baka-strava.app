@@ -45,7 +45,7 @@ def schedule_update_task(hours: int = 1):
     )
     
     _scheduler.start()
-    logger.info(f"✅ Schedule updater started (runs every {hours} hour{'s' if hours > 1 else ''})")
+    logger.info(f"[OK] Schedule updater started (runs every {hours} hour{'s' if hours > 1 else ''})")
     
     return _scheduler
 
@@ -57,7 +57,7 @@ def stop_scheduler():
     if _scheduler is not None:
         _scheduler.shutdown()
         _scheduler = None
-        logger.info("✅ Schedule updater stopped")
+        logger.info("[OK] Schedule updater stopped")
 
 
 def _update_all_schedules():
@@ -81,16 +81,16 @@ def _update_all_schedules():
             try:
                 logger.debug(f"Updating schedule for {class_identifier} (code: {code})...")
                 inserted = upload_schedule(code, class_identifier, confirm=False, dry_run=False)
-                logger.info(f"✅ Updated {class_identifier}: {inserted} entries")
+                logger.info(f"[OK] Updated {class_identifier}: {inserted} entries")
                 success_count += 1
             except Exception as e:
-                logger.error(f"❌ Failed to update {class_identifier}: {e}")
+                logger.error(f"[FAILED] Failed to update {class_identifier}: {e}")
                 error_count += 1
         
         logger.info(f"Schedule update completed: {success_count} succeeded, {error_count} failed")
     
     except Exception as e:
-        logger.error(f"❌ Failed to fetch class list: {e}")
+        logger.error(f"[FAILED] Failed to fetch class list: {e}")
 
 
 if __name__ == "__main__":

@@ -39,88 +39,63 @@ def is_empty_placeholder(text):
     return t in ["", "&nbsp;", "nbsp", "o", "-- o --", "-- TH --"]
 
 
-def parse_subject(cell):
+def parse_subject(cell, debug=False):
 
+    # returns subject, group, teacher, room, week_marker
     if not cell or not cell.get("elem"):
-        return None, None, None, None
+        return None, None, None, None, None
     
     elem = cell["elem"]
     full_text = elem.get_text(separator=" ", strip=True)
     
+    # handle odd/even week prefix like 'L:' or 'S:'
+    week = None
+    m = re.match(r"^([LSls])\s*:\s*(.*)$", full_text)
+    if m:
+        marker = m.group(1).upper()
+        week = "odd" if marker == "L" else "even"
+        full_text = m.group(2).strip()
+        if debug:
+            print(f"DEBUG parse_subject: Detected week marker {marker}, stripped to: {full_text}")
+    
     if is_empty_placeholder(full_text):
-        return None, None, None, None
+        return None, None, None, None, week
     
     spans = elem.find_all("span")
-    if not spans:
-        # no spans to inspect; attempt simple regex fallback on raw text
-        # format often looks like Subject(Variant)Teacher(Room)
-        text = full_text
-        match = re.match(r"^([^()\s]+)(?:\([^)]*\))?([^()\s]+)?(?:\((\d+)\))?$", text)
-        if match:
-            subj = match.group(1)
-            teach = match.group(2)
-            rm = match.group(3)
-            return subj, None, teach, rm
-        return None, None, None, None
-
+    
+    # Try to parse using spans first
     subject = None
     group = None
     teacher = None
     room = None
-
-    has_textsmaller = any("textsmaller_1" in span.get("class", []) for span in spans)
-
-    if has_textsmaller:
+    
+    if spans:
+        has_textsmaller = any("textsmaller_1" in span.get("class", []) for span in spans)
+        
         for i, span in enumerate(spans):
             text = span.get_text(strip=True)
             if not text:
                 continue
 
-            if i == 0:
-                subject = text
-            elif i == 1 and text.startswith("(") and text.endswith(")"):
-                group = text[1:-1]
-            elif i == 2:
-                teacher = text
-            elif i == 3 and text.startswith("(") and text.endswith(")"):
-                room = text[1:-1]
-    else:
-        for i, span in enumerate(spans):
-            text = span.get_text(strip=True)
-            if not text:
-                continue
+            # if we detected a week prefix, strip it from the first span
+            if i == 0 and week and re.match(r"^[LSls]:", text):
+                text = re.sub(r"^[LSls]:\s*", "", text)
 
             if i == 0:
                 subject = text
             elif i == 1:
                 if text.startswith("(") and text.endswith(")"):
+                    # Could be group or room - check if the content is numeric
                     inner = text[1:-1]
                     if inner.isdigit():
                         room = inner
                     else:
                         group = inner
                 else:
+                    # Non-parenthesized span 1 is a teacher
                     teacher = text
             elif i == 2:
-                if text.startswith("(") and text.endswith(")"):
-                    room = text[1:-1]
-                elif not teacher:
-                    teacher = text
-            elif i == 3 and text.startswith("(") and text.endswith(")"):
-                room = text[1:-1]
-            
-            if i == 0:
-                subject = text
-            elif i == 1:
-                if text.startswith("(") and text.endswith(")"):
-                    inner = text[1:-1]
-                    if inner.isdigit():
-                        room = inner
-                    else:
-                        group = inner
-                else:
-                    teacher = text
-            elif i == 2:
+                # Could be teacher or a parenthesized room
                 if text.startswith("(") and text.endswith(")"):
                     room = text[1:-1]
                 elif not teacher:
@@ -128,10 +103,38 @@ def parse_subject(cell):
             elif i == 3 and text.startswith("(") and text.endswith(")"):
                 room = text[1:-1]
     
+    # If parsing via spans didn't get all fields, try parsing full_text with parentheses
+    if full_text and (not subject):
+        # Parse using the stripped full_text which has no week marker
+        # Pattern is: SUBJECT (GROUP) TEACHER (ROOM)
+        if "(" in full_text and ")" in full_text:
+            # Split by parentheses to extract fields
+            parts = re.split(r'[\(\)]', full_text)
+            # Example: "Vv (SkA) Jk (28)" -> ["Vv", "SkA", "Jk", "28", ""]
+            cleaned = [p.strip() for p in parts if p.strip()]
+            
+            if len(cleaned) >= 1:
+                subject = cleaned[0]
+            if len(cleaned) >= 2:
+                # Could be group (non-numeric) or room (numeric)
+                if cleaned[1].isdigit():
+                    room = cleaned[1]
+                else:
+                    group = cleaned[1]
+            if len(cleaned) >= 3:
+                # Could be teacher or another field
+                teacher = cleaned[2]
+            if len(cleaned) >= 4:
+                # Anything after teacher in parentheses is room (could be numeric or alphanumeric)
+                room = cleaned[3]
+        else:
+            # No parentheses, use as subject directly
+            subject = full_text
+    
     # normalize/cleanup
     if group and subject and group.strip().lower() == subject.strip().lower():
         group = None
-    return subject, group, teacher, room
+    return subject, group, teacher, room, week
 
 
 def build_full_grid(rows, num_timeslots):
@@ -277,7 +280,7 @@ def parse_schedule(raw_schedule, debug=False):
                         print(f"  Row {data_row_idx}: COVERED by earlier rowspan, skip")
                     continue
                 
-                subject, group, teacher, room = parse_subject(cell)
+                subject, group, teacher, room, week = parse_subject(cell, debug=debug)
                 cell_text = cell.get("text", "").strip() if isinstance(cell.get("text", ""), str) else ""
 
                 if not subject and cell_text and not is_empty_placeholder(cell_text):
@@ -292,7 +295,8 @@ def parse_schedule(raw_schedule, debug=False):
                         group = None
 
                     if debug and day_name == "Po" and timeslot_idx <= 1:
-                        print(f"  Row {data_row_idx}: {subject} ({group}) -> EMIT")
+                        extra = f" week={week}" if week else ""
+                        print(f"  Row {data_row_idx}: {subject} ({group}){extra} -> EMIT")
                     entry = {
                         "rid": str(entry_id),
                         "day": day_name,
@@ -301,6 +305,7 @@ def parse_schedule(raw_schedule, debug=False):
                         "group": group,
                         "teacher": teacher,
                         "room": room,
+                        "week": week,
                     }
                     entries.append(entry)
                     entry_id += 1
