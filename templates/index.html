@@ -1,0 +1,252 @@
+<html lang="en">
+<head>
+    <style>
+        body {
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }x
+        .container-lg {
+            max-width: 100%; /* Ensure the container does not exceed the viewport */
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+
+        <nav class="navbar bg-primary">
+            <div class="container-fluid">
+                <div class="card col-1 text-center bg-light">
+                    <a href="#" class="icon-link icon-link-hover ms-3" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" href="#">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="bi" viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                        </svg>
+                        Profil
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+
+<section id="přehled" class="bg-light pt-4 pb-3">
+    <div class="container-lg">
+        <div class="text-center">
+            <h2>Školní přehled</h2>
+            <p class="lead text-muted">přehled dnešního rozvrhu hodin a obědu</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-8 col-md-4 col-lg-5">
+                <div class="card shadow mb-5 mt-3">
+                    <div class="card-body text-center py-4">
+                        <h4 class="card-title mb-3">Aktuální hodiny</h4>
+                        <ul class="list-group">
+                            <li class="list-group-item text-start"><b>Předešlá:</b>
+                                <div id="previous-period">Načítání...</div>
+                            </li>
+                            <li class="list-group-item text-start active"><b>Nynější:</b>
+                                <div id="current-period">Načítání...</div>
+                            </li>
+                            <li class="list-group-item text-start"><b>Následující:</b>
+                                <div id="next-period">Načítání...</div>
+                            </li>
+                        </ul>
+                        <a role="link" href="/rozvrh-hodin" class="btn btn-outline-primary btn-lg mt-3">Celý rozvrh hodin</a>
+                    </div>
+                </div>
+
+            </div>
+             <div class="col-8 col-md-6 col-lg-5">
+                <div class="card shadow mb-5 mt-3">
+                    <div class="card-body text-center py-4">
+                        <h4 class="card-title mb-3">Dnešní oběd</h4>
+                        <ul class="list-group">
+                            <li class="list-group-item text-start"><b>Polévka:</b>
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col ms-2" id="lunch-soup">Načítání...</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item text-start"><b>Oběd 1:</b>
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col ms-2" id="lunch-first">Načítání...</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item text-start"><b>Oběd 2:</b>
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col ms-2" id="lunch-second">Načítání...</div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="list-group-item text-start"><b>Doplněk:</b>
+                                <div class="card">
+                                    <div class="row">
+                                        <div class="col ms-2" id="lunch-dopln">Načítání...</div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="/rozvrh-obedu" class="btn btn-outline-primary btn-lg mt-3">Celý rozvrh obědů</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div.container-lg>
+</section>
+<div class="text-center text-muted small mt-3" id="last-update">
+    Poslední aktualizace: načítání...
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script>
+        // Map time slots to lesson order numbers
+        const TIME_SLOT_ORDER = {
+            "8:00- 8:45": 1, "8:55- 9:40": 2, "10:00-10:45": 3, "10:55-11:40": 4,
+            "11:50-12:35": 5, "12:45-13:30": 6, "13:35-14:20": 7, "14:25-15:10": 8,
+            "15:15-16:00": 9
+        };
+
+        async function updateTimetable() {
+            // Update last update time
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('last-update').textContent = `Poslední aktualizace: ${timeString}`;
+
+            try {
+                const response = await fetch('/api/current-period');
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    // Update previous period
+                    if (data.previous) {
+                        const prevOrder = TIME_SLOT_ORDER[data.previous.time_slot] || '?';
+                        const prevLesson = data.previous.lessons[0] || {};
+                        const prevHtml = `
+                            <div class="card">
+                                <div class="row my-1 justify-content-start">
+                                    <div class="col text-start ms-2">${prevOrder}.</div>
+                                    <div class="col text-end me-2">${data.previous.time_slot}</div>
+                                </div>
+                                <div class="card text-center">
+                                    <div class="row row-cols-1 slign-items-center justify-content-center">
+                                        <span class="col-2 badge text-bg-primary rounded-pill">${prevLesson.room || ''}</span>
+                                        <div class="row">
+                                            <div class="col text-end">${prevLesson.subject || ''}</div>
+                                            <div class="col text-start">(${prevLesson.teacher || ''})</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('previous-period').innerHTML = prevHtml;
+                    } else {
+                        document.getElementById('previous-period').innerHTML = '<p>Žádná předchozí hodina</p>';
+                    }
+
+                    // Update current period
+                    if (data.current) {
+                        const currOrder = TIME_SLOT_ORDER[data.current.time_slot] || '?';
+                        const currLesson = data.current.lessons[0] || {};
+                        const currHtml = `
+                            <div class="card">
+                                <div class="row my-1 justify-content-start">
+                                    <div class="col text-start ms-2">${currOrder}.</div>
+                                    <div class="col text-end me-2">${data.current.time_slot}</div>
+                                </div>
+                                <div class="card text-center">
+                                    <div class="row row-cols-1 slign-items-center justify-content-center">
+                                        <span class="col-2 badge text-bg-primary rounded-pill">${currLesson.room || ''}</span>
+                                        <div class="row">
+                                            <div class="col text-end">${currLesson.subject || ''}</div>
+                                            <div class="col text-start">(${currLesson.teacher || ''})</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('current-period').innerHTML = currHtml;
+                    } else {
+                        document.getElementById('current-period').innerHTML = '<p>Žádná aktuální hodina</p>';
+                    }
+
+                    // Update next period
+                    if (data.next) {
+                        const nextOrder = TIME_SLOT_ORDER[data.next.time_slot] || '?';
+                        const nextLesson = data.next.lessons[0] || {};
+                        const nextHtml = `
+                            <div class="card">
+                                <div class="row my-1 justify-content-start">
+                                    <div class="col text-start ms-2">${nextOrder}.</div>
+                                    <div class="col text-end me-2">${data.next.time_slot}</div>
+                                </div>
+                                <div class="card text-center">
+                                    <div class="row row-cols-1 slign-items-center justify-content-center">
+                                        <span class="col-2 badge text-bg-primary rounded-pill">${nextLesson.room || ''}</span>
+                                        <div class="row">
+                                            <div class="col text-end">${nextLesson.subject || ''}</div>
+                                            <div class="col text-start">(${nextLesson.teacher || ''})</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('next-period').innerHTML = nextHtml;
+                    } else {
+                        document.getElementById('next-period').innerHTML = '<p>Žádná následující hodina</p>';
+                    }
+                } else {
+                    // Handle errors or weekend
+                    const message = data.message || 'Chyba při načítání rozvrhu';
+                    document.getElementById('previous-period').innerHTML = `<p>${message}</p>`;
+                    document.getElementById('current-period').innerHTML = `<p>${message}</p>`;
+                    document.getElementById('next-period').innerHTML = `<p>${message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error fetching timetable:', error);
+                // Optionally show error in UI
+            }
+        }
+
+        // Initial load
+        updateTimetable();
+
+        // Update every 30 seconds
+        setInterval(updateTimetable, 30000);
+        
+        // Fetch today's lunch and update the lunch card
+        async function updateLunch() {
+            try {
+                const res = await fetch('/api/today-lunch');
+                const data = await res.json();
+
+                // If API returned error-style object
+                if (data && data.status === 'error') {
+                    const msg = data.message || 'Nelze načíst oběd';
+                    document.getElementById('lunch-first').textContent = msg;
+                    document.getElementById('lunch-second').textContent = msg;
+                    document.getElementById('lunch-soup').textContent = msg;
+                    document.getElementById('lunch-dopln').textContent = msg;
+                    return;
+                }
+
+                document.getElementById('lunch-first').textContent = data.first || '';
+                document.getElementById('lunch-second').textContent = data.second || '';
+                // 'doplněk' contains a non-ascii key, access with bracket notation
+                document.getElementById('lunch-dopln').textContent = data['doplněk'] || data.dopln || '';
+                document.getElementById('lunch-soup').textContent = data.soup || '';
+            } catch (err) {
+                console.error('Error fetching lunch:', err);
+            }
+        }
+
+        // Initial lunch load and periodic refresh
+        updateLunch();
+        setInterval(updateLunch, 60000);
+    </script>
+</body>
+</html>
+
