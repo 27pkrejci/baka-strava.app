@@ -5,13 +5,12 @@ import psycopg2
 import logging
 import json
 
-from scbc.config import DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT
+from scbc.config import DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT, TABLE_NAME
 from scbc.scheduler import schedule_update_task, stop_scheduler
 from stsc import schedule_lunch_updates, stop_lunch_scheduler
 from timetable_api import find_current_period
 from lunch_api import get_lunch_schedule
 from week_schedule_api import get_week_schedule
-
 
 from flask import request
 app = Flask(__name__)
@@ -40,7 +39,7 @@ class Lunch(db.Model):
     ordered = db.Column(db.Boolean)
 
 class Schedule(db.Model):
-    __tablename__ = 'timetable_3p'
+    __tablename__ = TABLE_NAME
     rid = db.Column(db.Integer, primary_key=True)
     day = db.Column(db.String, nullable=False)
     time_slot = db.Column(db.String, nullable=False)
@@ -49,6 +48,7 @@ class Schedule(db.Model):
     week = db.Column(db.String, nullable=True)
     teacher = db.Column(db.String, nullable=False)
     room = db.Column(db.String, nullable=False)
+    class_name = db.Column(db.String, nullable=True)
 
 with app.app_context():
     db.create_all()
@@ -145,7 +145,7 @@ def schedule():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute('SELECT day, time_slot, subject, "group", week, teacher, room FROM timetable_3p ORDER BY day, time_slot;')
+        cur.execute(f'SELECT day, time_slot, subject, "group", week, teacher, room FROM {TABLE_NAME} ORDER BY day, time_slot;')
         rows = cur.fetchall()
         cur.close()
         conn.close()
@@ -211,7 +211,9 @@ def shutdown_scheduler(exception=None):
 
 @app.route('/api/current-period')
 def current_period():
-    data = find_current_period(get_db_connection)
+    selected_class = request.args.get('class')
+    selected_groups = request.args.getlist('groups')
+    data = find_current_period(get_db_connection, selected_class, selected_groups)
     return json.dumps(data, ensure_ascii=False, indent=2)
 
 
@@ -264,7 +266,9 @@ def lunch_schedule_api():
 def week_schedule_api():
     """Return JSON with week schedule (Monday-Friday)."""
     try:
-        schedule = get_week_schedule(get_db_connection)
+        selected_class = request.args.get('class')
+        selected_groups = request.args.getlist('groups')
+        schedule = get_week_schedule(get_db_connection, selected_class, selected_groups)
         return json.dumps(schedule, ensure_ascii=False, indent=2)
     except Exception as e:
         return json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False, indent=2)
@@ -276,7 +280,39 @@ def groups_api():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute('SELECT DISTINCT "group" FROM timetable_3p WHERE "group" IS NOT NULL AND "group" <> %s ORDER BY "group";', ('',))
+        cur.execute(f'SELECT DISTINCT "group" FROM {TABLE_NAME} WHERE "group" IS NOT NULL AND "group" <> %s ORDER BY "group";', ('',))
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        groups = [r[0] for r in rows if r[0]]
+        return json.dumps({'groups': groups}, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False, indent=2)
+
+@app.route('/api/classes')
+def classes_api():
+    """Return JSON list of distinct classes available in the timetable."""
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(f'SELECT DISTINCT class_name FROM {TABLE_NAME} WHERE class_name IS NOT NULL AND class_name <> %s ORDER BY class_name;', ('',))
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        classes = [r[0] for r in rows if r[0]]
+        return json.dumps({'classes': classes}, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return json.dumps({"status": "error", "message": str(e)}, ensure_ascii=False, indent=2)
+
+@app.route('/api/groups/<class_name>')
+def groups_for_class_api(class_name):
+    """Return JSON list of distinct groups for a specific class."""
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(f'SELECT DISTINCT "group" FROM {TABLE_NAME} WHERE class_name = %s AND "group" IS NOT NULL AND "group" <> %s ORDER BY "group";', (class_name, ''))
         rows = cur.fetchall()
         cur.close()
         conn.close()

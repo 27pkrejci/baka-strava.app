@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from scbc.config import TABLE_NAME
 
 # Time slots mapping
 TIME_SLOT_ORDER = {
@@ -29,8 +30,10 @@ DB_DAY_NAMES = {
 class WeekScheduleRepository:
     """Responsible for fetching and organizing week schedule data."""
     
-    def __init__(self, db_connection_func):
+    def __init__(self, db_connection_func, selected_class=None, selected_groups=None):
         self.db_connection_func = db_connection_func
+        self.selected_class = selected_class
+        self.selected_groups = selected_groups
     
     def get_week_schedule(self):
         """
@@ -56,10 +59,23 @@ class WeekScheduleRepository:
             cur = conn.cursor()
             
             # Fetch all lessons for all weekdays (including week attribute: S, L, or NULL)
-            query = """
+            query = f"""
                 SELECT day, time_slot, subject, "group", teacher, room, week
-                FROM timetable_3p
+                FROM {TABLE_NAME}
                 WHERE day IN ('Po', 'Ut', 'St', 'Ct', 'Pa')
+            """
+            params = []
+            
+            if self.selected_class:
+                query += " AND class_name = %s"
+                params.append(self.selected_class)
+            
+            if self.selected_groups:
+                placeholders = ', '.join(['%s'] * len(self.selected_groups))
+                query += f""" AND ("group" IN ({placeholders}) OR "group" IS NULL OR "group" = '')"""
+                params.extend(self.selected_groups)
+            
+            query += """
                 ORDER BY day, 
                          CASE time_slot
                              WHEN '8:00- 8:45' THEN 1
@@ -75,7 +91,7 @@ class WeekScheduleRepository:
                          END
             """
             
-            cur.execute(query)
+            cur.execute(query, params)
             rows = cur.fetchall()
             cur.close()
             conn.close()
@@ -130,7 +146,7 @@ class WeekScheduleRepository:
         return schedule
 
 
-def get_week_schedule(db_connection_func):
+def get_week_schedule(db_connection_func, selected_class=None, selected_groups=None):
     """Helper function to get week schedule."""
-    repo = WeekScheduleRepository(db_connection_func)
+    repo = WeekScheduleRepository(db_connection_func, selected_class, selected_groups)
     return repo.get_week_schedule()

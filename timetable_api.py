@@ -1,4 +1,5 @@
 from datetime import datetime, time
+from scbc.config import TABLE_NAME
 
 # Define time slots with their order in one place to avoid duplication
 TIME_SLOT_ORDER = {
@@ -44,8 +45,10 @@ class TimeSlotParser:
 class TimetableRepository:
     """Responsible for database operations related to timetable."""
     
-    def __init__(self, db_connection_func):
+    def __init__(self, db_connection_func, selected_class=None, selected_groups=None):
         self.db_connection_func = db_connection_func
+        self.selected_class = selected_class
+        self.selected_groups = selected_groups
     
     def get_lessons_for_day(self, czech_day):
         """Fetch lessons for a given day from database."""
@@ -61,12 +64,23 @@ class TimetableRepository:
             
             query = f"""
                 SELECT time_slot, subject, "group", teacher, room, week
-                FROM timetable_3p 
+                FROM {TABLE_NAME} 
                 WHERE day = %s
-                ORDER BY {order_by_clause}
             """
+            params = [czech_day]
             
-            cur.execute(query, (czech_day,))
+            if self.selected_class:
+                query += " AND class_name = %s"
+                params.append(self.selected_class)
+            
+            if self.selected_groups:
+                placeholders = ', '.join(['%s'] * len(self.selected_groups))
+                query += f""" AND ("group" IN ({placeholders}) OR "group" IS NULL OR "group" = '')"""
+                params.extend(self.selected_groups)
+            
+            query += f" ORDER BY {order_by_clause}"
+            
+            cur.execute(query, params)
             
             db_rows = cur.fetchall()
             cur.close()
@@ -192,7 +206,7 @@ class ResponseFormatter:
         
         return result
 
-def find_current_period(db_connection_func):
+def find_current_period(db_connection_func, selected_class=None, selected_groups=None):
     """
     Main function - finds previous, current and next period.
     Orchestrates the SRP classes.
@@ -234,7 +248,7 @@ def find_current_period(db_connection_func):
         time_slot_parser = TimeSlotParser()
         time_slots = time_slot_parser.get_parsed_time_slots()
         
-        repository = TimetableRepository(db_connection_func)
+        repository = TimetableRepository(db_connection_func, selected_class, selected_groups)
         db_rows = repository.get_lessons_for_day(czech_day)
         
         if not db_rows:

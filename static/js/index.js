@@ -27,6 +27,22 @@ function pickLesson(lessons) {
     return null;
 }
 
+// Helper to build query string for API calls
+function buildQueryString() {
+    const params = new URLSearchParams();
+    const selectedClass = localStorage.getItem('selectedClass');
+    const selectedGroups = JSON.parse(localStorage.getItem('selectedGroups') || '[]');
+    
+    if (selectedClass) {
+        params.append('class', selectedClass);
+    }
+    selectedGroups.forEach(group => {
+        params.append('groups', group);
+    });
+    
+    return params.toString();
+}
+
 // Template helper function
 function createPeriodCard(period) {
     const template = document.getElementById('period-card-template');
@@ -53,7 +69,9 @@ async function updateTimetable() {
     }
 
     try {
-        const response = await fetch('/api/current-period');
+        const query = buildQueryString();
+        const url = query ? `/api/current-period?${query}` : '/api/current-period';
+        const response = await fetch(url);
         const data = await response.json();
 
         if (data.status === 'success') {

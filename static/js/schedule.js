@@ -16,6 +16,22 @@ const DAYS_FORMATTED = {
     'Friday': 'Pá'
 };
 
+// Helper to build query string for API calls
+function buildQueryString() {
+    const params = new URLSearchParams();
+    const selectedClass = localStorage.getItem('selectedClass');
+    const selectedGroups = JSON.parse(localStorage.getItem('selectedGroups') || '[]');
+    
+    if (selectedClass) {
+        params.append('class', selectedClass);
+    }
+    selectedGroups.forEach(group => {
+        params.append('groups', group);
+    });
+    
+    return params.toString();
+}
+
 // Template helper functions
 function createLessonCell(lesson) {
     const template = document.getElementById('lesson-cell-template');
@@ -140,7 +156,9 @@ function renderScheduleTable(schedule) {
 // Main data loading function
 async function loadWeekSchedule() {
     try {
-        const response = await fetch('/api/week-schedule');
+        const query = buildQueryString();
+        const url = query ? `/api/week-schedule?${query}` : '/api/week-schedule';
+        const response = await fetch(url);
         const schedule = await response.json();
 
         if (schedule.status === 'error') {

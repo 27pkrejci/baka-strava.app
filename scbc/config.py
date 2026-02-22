@@ -7,6 +7,8 @@ DB_USER = os.getenv("SCBC_DB_USER", "postgres")
 DB_PASSWORD = os.getenv("SCBC_DB_PASSWORD", "dat224551")
 DB_PORT = int(os.getenv("SCBC_DB_PORT", "1325"))
 
+TABLE_NAME = 'timetable'
+
 def db_dsn_no_password() -> str:
     return f"host={DB_HOST} dbname={DB_NAME} user={DB_USER} port={DB_PORT}"
 

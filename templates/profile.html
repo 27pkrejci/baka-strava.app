@@ -14,14 +14,22 @@
     </nav>
 
     <div class="container mt-4">
-        <h2>Profil (volba skupin)</h2>
-        <p class="text-muted">Vyberte své skupiny, volba se uloží lokálně v prohlížeči a použije se pro filtrování rozvrhu</p>
+        <h2>Profil (volba třídy a skupin)</h2>
+        <p class="text-muted">Vyberte svou třídu a skupiny, volba se uloží lokálně v prohlížeči a použije se pro filtrování rozvrhu</p>
 
-        <div id="groups-container" class="mb-3">
-            Načítání skupin...
+        <div id="class-container" class="mb-3">
+            <label for="class-select" class="form-label">Vyberte třídu:</label>
+            <select id="class-select" class="form-select">
+                <option value="">Načítání tříd...</option>
+            </select>
         </div>
 
-        <div>
+        <div id="groups-container" class="mb-3" style="display: none;">
+            <label class="form-label">Vyberte skupiny:</label>
+            <div id="groups-list">Vyberte třídu nejprve.</div>
+        </div>
+
+        <div id="buttons" style="display: none;">
             <button id="save-btn" class="btn btn-primary">Uložit</button>
             <button id="clear-btn" class="btn btn-secondary ms-2">Vymazat výběr</button>
         </div>
