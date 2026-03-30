@@ -25,35 +25,53 @@ def _connect_db():
 
 
 def main():
-    conn = _connect_db()
-    cur = conn.cursor()
-
-    cur.execute("TRUNCATE TABLE lunch RESTART IDENTITY;")
-
     # NOTE: StravaCZ credentials are stored here in legacy code. Keep them safe.
-    strava = StravaCZ(username="antonin.krejci", password="Ton224551", canteen_number="6627")
-    menu = strava.get_menu(include_soup=True)  # Include soups in the menu
+    try:
+        strava = StravaCZ(username="antonin.krejci", password="Ton224551", canteen_number="6627")
+        menu = strava.get_menu(include_soup=True)  # Include soups in the menu
+    except Exception as e:
+        logger.warning(f"Failed to fetch lunch data from StravaCZ: {e}")
+        return
 
-    for day_data in menu:
-        date = day_data['date']
-        for meal in day_data.get('meals', []):
-            allergens = meal.get('alergens') or meal.get('allergens')
-            cur.execute("""
-                INSERT INTO lunch (date, meal_type, name, allergens, ordered)
-                VALUES (%s, %s, %s, %s, %s)
-            """, (
-                date,
-                meal.get('type'),
-                meal.get('name'),
-                json.dumps(allergens) if allergens is not None else None,
-                meal.get('ordered', False)
-            ))
+    if not menu:
+        logger.warning("Fetched lunch menu is empty; no database update will be performed.")
+        return
 
-    conn.commit()
-    cur.close()
-    conn.close()
+    conn = None
+    cur = None
+    try:
+        conn = _connect_db()
+        cur = conn.cursor()
 
-    print("✅ Lunch menu data saved successfully!")
+        cur.execute("TRUNCATE TABLE lunch RESTART IDENTITY;")
+
+        for day_data in menu:
+            date = day_data['date']
+            for meal in day_data.get('meals', []):
+                allergens = meal.get('alergens') or meal.get('allergens')
+                cur.execute("""
+                    INSERT INTO lunch (date, meal_type, name, allergens, ordered)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (
+                    date,
+                    meal.get('type'),
+                    meal.get('name'),
+                    json.dumps(allergens) if allergens is not None else None,
+                    meal.get('ordered', False)
+                ))
+
+        conn.commit()
+        print("✅ Lunch menu data saved successfully!")
+    except Exception as e:
+        if conn is not None:
+            conn.rollback()
+        logger.error(f"Failed to update lunch menu in database: {e}")
+        print(f"Error saving lunch menu: {e}")
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
 
 
 def schedule_lunch_updates(hour: int = 6, minute: int = 0):
@@ -99,5 +117,4 @@ def stop_lunch_scheduler():
 
 
 if __name__ == '__main__':
-    main()
     main()
